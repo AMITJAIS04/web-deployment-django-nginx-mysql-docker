@@ -2,31 +2,37 @@
 
 ## Project Overview
 
-This project demonstrates the deployment of a Django web application using Docker and Docker Compose on an AWS EC2 Ubuntu instance. Nginx acts as a reverse proxy, Django runs the application using Gunicorn, and MySQL is used as the database.
-
-The purpose of this project is to practice containerization, multi-container deployment, reverse proxy configuration, and basic cloud deployment.
+This project demonstrates the deployment of a Django web application using Docker, Docker Compose, Nginx, and MySQL on an AWS EC2 Ubuntu instance. Nginx acts as a reverse proxy, Gunicorn runs the Django application, and MySQL stores application data.
 
 ## Technologies Used
 
-- **AWS EC2** – Hosts the application
-- **Docker** – Containerizes the application
-- **Docker Compose** – Manages multiple containers
-- **Django** – Python web application framework
-- **Gunicorn** – WSGI application server
-- **Nginx** – Web server and reverse proxy
-- **MySQL** – Database
-- **Ubuntu Linux** – Server operating system
-- **Git & GitHub** – Version control and source code management
+- AWS EC2
+- Ubuntu Linux
+- Docker
+- Docker Compose
+- Django
+- Gunicorn
+- Nginx
+- MySQL
+- Git and GitHub
 
 ## Architecture
 
 The project consists of three main services:
 
 1. **Nginx:** Receives incoming HTTP requests and forwards them to the Django application.
-2. **Django:** Runs the application using Gunicorn and handles application logic.
-3. **MySQL:** Stores application data persistently using a mounted volume.
+2. **Django:** Handles application logic and runs using Gunicorn.
+3. **MySQL:** Stores application data in a database.
 
-Docker Compose manages the services and connects them through a shared Docker network.
+Docker Compose manages all three services and connects them through a shared Docker network.
+
+## Docker Networking and Persistent Storage
+
+- **Docker Network:** Created a custom Docker network named `notes-app` to enable communication between the Nginx, Django, and MySQL containers using their service names.
+
+- **Persistent Storage:** Configured persistent storage for MySQL database files using a host directory mounted into the container. This helps preserve database data when containers are stopped, restarted, or recreated.
+
+- **Container Management:** Used Docker Compose to build, configure, and manage all application services from a single configuration file.
 
 ## Project Structure
 
@@ -35,8 +41,8 @@ django-notes-app/
 ├── nginx/
 │   ├── Dockerfile
 │   └── default.conf
-├── manage.py
 ├── notesapp/
+├── manage.py
 ├── Dockerfile
 ├── docker-compose.yml
 ├── requirements.txt
@@ -45,15 +51,7 @@ django-notes-app/
 └── README.md
 ```
 
-*Note: The exact files and directories may vary depending on your project.*
-
-## Prerequisites
-
-- An AWS EC2 instance running Ubuntu
-- Docker installed
-- Docker Compose plugin installed
-- Git installed
-- AWS security group configured to allow the required application traffic
+*Note: The exact directory structure may vary depending on the project files.*
 
 ## Deployment Steps
 
@@ -66,33 +64,33 @@ cd web-deployment-django-nginx-mysql-docker
 
 ### 2. Configure Environment Variables
 
-Create or update the `.env` file with the environment variables required by your Django application and database configuration.
+Configure the required environment variables in the `.env` file for Django and database connectivity.
 
-**Important:** Do not upload passwords, secret keys, or other sensitive information to GitHub.
+Do not upload sensitive information such as passwords or Django secret keys to GitHub.
 
-### 3. Build and Start the Containers
+### 3. Build and Start Containers
 
 ```bash
 docker compose up --build -d
 ```
 
-### 4. Check Container Status
+### 4. Verify Container Status
 
 ```bash
 docker compose ps
 ```
 
-### 5. View Application Logs
+### 5. Check Application Logs
 
 ```bash
 docker compose logs
 ```
 
-To check logs for an individual service:
+To check individual services:
 
 ```bash
-docker compose logs django
 docker compose logs nginx
+docker compose logs django
 docker compose logs db
 ```
 
@@ -104,7 +102,7 @@ Open the following URL in your browser:
 http://YOUR-EC2-PUBLIC-IP
 ```
 
-Replace `YOUR-EC2-PUBLIC-IP` with your EC2 instance's public IP address. Ensure the Nginx service is configured correctly and inbound HTTP traffic on port 80 is allowed by the EC2 security group.
+Replace `YOUR-EC2-PUBLIC-IP` with your EC2 instance's public IP address. Ensure inbound traffic on port 80 is allowed in the EC2 security group and Nginx is configured to forward requests to Django.
 
 ## Useful Docker Commands
 
@@ -120,13 +118,13 @@ Stop the application:
 docker compose down
 ```
 
-Rebuild and restart the application:
+Rebuild and start the application:
 
 ```bash
 docker compose up --build -d
 ```
 
-Follow application logs:
+View live logs:
 
 ```bash
 docker compose logs -f
@@ -134,26 +132,18 @@ docker compose logs -f
 
 ## Key Learnings
 
-- Containerizing a Django web application using Docker
-- Managing multiple services using Docker Compose
-- Configuring Nginx as a reverse proxy
-- Running Django with Gunicorn
-- Connecting Django to a MySQL database
-- Using Docker networks and persistent volumes
-- Deploying an application on AWS EC2
-- Managing source code using Git and GitHub
+- Deployed a Django web application using Docker and Docker Compose.
+- Configured Nginx as a reverse proxy for the Django application.
+- Used Gunicorn to run the Django application.
+- Integrated Django with a MySQL database.
+- Created a custom Docker network for container-to-container communication.
+- Configured persistent storage to retain database data across container restarts and recreation.
+- Deployed the application on AWS EC2 Ubuntu.
+- Managed project source code using Git and GitHub.
 
 ## Future Improvements
 
-- Configure HTTPS using SSL/TLS certificates
-- Improve secret management using environment variables and secure storage
-- Add health checks and service readiness dependencies
-- Implement a CI/CD pipeline using GitHub Actions
-
-## Author
-
-**Amit Jaiswar**
-
-GitHub: [AMITJAIS04](https://github.com/AMITJAIS04)
-
-LinkedIn: [Connect with me](https://www.linkedin.com/in/amit-jais04)
+- Configure HTTPS using SSL/TLS certificates.
+- Implement a CI/CD pipeline using GitHub Actions.
+- Improve secrets management and application security.
+- Configure regular database backups and monitoring.
